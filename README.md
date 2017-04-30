@@ -1,4 +1,4 @@
-#**Behavioral Cloning for Self-Driving Cars**
+# **Behavioral Cloning for Self-Driving Cars**
 
 [//]: # (Image References)
 
@@ -7,19 +7,17 @@
 [image3]: ./readme_images/3views.png "3 Camera Views"
 [image4]: ./readme_images/mirror.png "Mirrored Images"
 [image5]: ./readme_images/cropped.png "Cropped Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
 
 This project was a submission for Udacity's Self-driving Car Nanodegree Project 3. The aim was to build and train a convolutional neural network (CNN) capable of steering a car around a simulator. This involved learning from prior driving behaviour, as the title suggests. Built on Python and Keras, and implemented NVIDIA's end-to-end learning model. Trained on a NVIDIA 860M, HP Omen 15.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/DLJC36mshL4" frameborder="0" allowfullscreen></iframe>
+[![Alt text](https://img.youtube.com/vi/DLJC36mshL4/0.jpg)](https://www.youtube.com/watch?v=DLJC36mshL4)
 
 ## Model Architecture
-The model used is an implementation of NVIDIA's end-to-end learning model (https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars). Designed in 2016, the model has proven itself in real-world scenarios, and proved more than sufficient for this application.
+The model used is an implementation of [NVIDIA's end-to-end learning model](https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars). Designed in 2016, the model has proven itself in real-world scenarios, and proved more than sufficient for this application.
 
 ![alt text][image1]
 
-Modified from NVIDIA's dev blog, link above.
+*Modified from NVIDIA's dev blog, link above.*
 
 Every convolutional layer is activated with a RELU function to introduce non-linearity, while dropouts of 0.5 are introduced after every fully connected layer except the final layer to prevent overfitting.
 
@@ -27,15 +25,15 @@ The error was finally calculated with a means-squared error function, and learni
 
 ## Dataset Preparation
 
-[gif of driving about]
-
 ### Control
 Data was collected by recording my driving on Udacity's provided Unity simulator. Steering and throttle were controlled with an Xbox 360 controller for finer, more precise input. The result can only be as good as the data, and it was imperative that my recorded driving be up to scratch.
 Effort was made to avoid janky steering input. I attempted to steer as smoothly as possible, to allow for more gradual steering angle distribution.
 
+
 ![alt text][image3]
 ### Left, Right and Center
 The simulator recorded 3 camera views - one from the bonnet and one from each wing mirror. The view from each wing mirror can be interpreted as another vehicle translated to the left or right. As such, we can use those images as additional sets of data, effectively tripling our dataset. An angular offset of 3 degrees was added to each view to compensate for the shift.
+
 
 ![alt text][image4]
 ### Mirroring
@@ -50,9 +48,8 @@ After 4 laps around the track (clockwise and counter-clockwise), I re-attempted 
 ### The More The Merrier
 After collecting something on the order of 20,000 images, I decided to further add to my dataset by loading in Udacity's own. This nearly doubled my available data, a major plus point being that my additional data was proven to be reliable.
 
-![alt text][image5]
-cropped and normalised
 
+![alt text][image5]
 ### Cropping and Normalisation
 As part of the network, images are cropped top and bottom. These portions contain relatively useless features like the vehicle's bonnet and sky. Images were then normalised using lambda to bring their values between -0.5 and 0.5.
 
@@ -65,14 +62,17 @@ As my dataset grew, CUDA began throwing memory errors, and I employed a modified
 
 The car was doing better and better! One thing that continued to irk me was the car's throttle and braking motion. The car's movements were constantly oscillating about the target speed, and doing so very poorly. This was due to the PI controller used to modulate the vehicle's speed. 
 
-After a little research, I settled on the design laid out in ivmech's implementation here (https://github.com/ivmech/ivPID). With some parameter tuning, velocity was constant! It was off to the races.
+After a little research, I settled on the design laid out in ivmech's implementation [here](https://github.com/ivmech/ivPID). With some parameter tuning, velocity was constant! It was off to the races.
 
 Adding images from all 3 cameras into the dataset was fairly trivial - unfortunately tuning the angular offset both sides was not! Too small a value and the vehicle tended to understeer off the track. Too high, and the vehicle weaved from side to side. Not to mention the long iteration time thanks to the model being trained! 
 
 After much testing, I found that doing without the 3 camera views yielded a much better result, and decided to do away with them entirely.
 
-I eventually settled on a value of 0.04, decided upon empirically after much testing.
-
-In order to further bolster my dataset, I elected to add Udacity's provided data to mine, and load in all 3 camera images as outlined above. The angular offset for left-right cameras required some trial and error, but soon enough the car was masterfully carving its way around the track.
+In order to further bolster my dataset, I elected to add Udacity's provided data to mine. Soon enough the car was masterfully carving its way around the track.
 
 ## Conclusion
+This project was both fun and illuminating. Like a lot of deep learning, it was deceptively easy to get a passable result, but difficult to get a consistently reliable one.
+
+The car's inputs were rather gradual, and while that resulted in a smooth driving style, it almost meant a lack of responsiveness at higher speeds. Perhaps a higher framerate or more aggressive steering input during the training stage could've helped with that.
+
+My model is a direct implementation of NVIDIA's end-to-end architecture. As effective as it is, I'd be interested to learn how they arrived at this design, and gain a better intuition of how I might modify it for more specific use cases thereafter.
