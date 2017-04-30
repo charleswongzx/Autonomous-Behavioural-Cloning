@@ -16,41 +16,30 @@ from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
 
+import signal
+import sys
+from PID import PID
+
+def signal_handler(signal, frame):
+    print('You pressed Ctrl+C!')
+    sys.exit(0)
+
 sio = socketio.Server()
 app = Flask(__name__)
 model = None
 prev_image_array = None
 
 
-class SimplePIController:
-    def __init__(self, Kp, Ki):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.set_point = 0.
-        self.error = 0.
-        self.integral = 0.
-
-    def set_desired(self, desired):
-        self.set_point = desired
-
-    def update(self, measurement):
-        # proportional error
-        self.error = self.set_point - measurement
-
-        # integral error
-        self.integral += self.error
-
-        return self.Kp * self.error + self.Ki * self.integral
-
-
-controller = SimplePIController(0.1, 0.002)
-set_speed = 9
-controller.set_desired(set_speed)
+controller = PID(P=0.08, I=0.0, D=1.0)
+set_speed = 18
+controller.setpoint(set_speed)
 
 
 @sio.on('telemetry')
 def telemetry(sid, data):
     if data:
+        signal.signal(signal.SIGINT, signal_handler)
+
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
         # The current throttle of the car
