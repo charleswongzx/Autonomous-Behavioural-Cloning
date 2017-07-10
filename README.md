@@ -8,7 +8,7 @@
 [image4]: ./readme_images/mirror.png "Mirrored Images"
 [image5]: ./readme_images/cropped.png "Cropped Image"
 
-This project was a submission for Udacity's Self-driving Car Nanodegree Project 3. The aim was to build and train a convolutional neural network (CNN) capable of steering a car around a simulator. This involved learning from prior driving behaviour, as the title suggests. Built on Python and Keras, and implemented NVIDIA's end-to-end learning model. Trained on a NVIDIA 860M, HP Omen 15.
+This project was a submission for Udacity's Self-driving Car Nanodegree. The aim was to build and train a convolutional neural network (CNN) capable of steering a car around a simulator. This involved learning from prior driving behaviour, as the title suggests. Built on Python and Keras, and implemented NVIDIA's end-to-end learning model. Trained on a NVIDIA 860M, HP Omen 15.
 
 [![Alt text](https://img.youtube.com/vi/DLJC36mshL4/0.jpg)](https://www.youtube.com/watch?v=DLJC36mshL4)
 
